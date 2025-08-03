@@ -19,7 +19,8 @@ class GameUI:
                 screen.clear()
 
                 self.print_action(screen)
-                self.draw_board(self.controller.game.map, screen)
+                for room in self.controller.game.dungeon.rooms:
+                    self.draw_room(room, screen)
                 self.print_status(screen)
                 screen.addch(self.controller.game.player.position.y + 1, self.controller.game.player.position.x, '@')
 
@@ -41,18 +42,19 @@ class GameUI:
                 screen.refresh()
                 time.sleep(0.5)
 
-    def draw_board(self, board, screen):
-        for i in range(board.left_board, board.right_board + 1):
-            screen.addch(board.up_board + 1, i, '-')
-            screen.addch(board.down_board + 1, i, '-')
-        for j in range(board.up_board, board.down_board + 1):
-            screen.addch(j + 1, board.left_board, '|')
-            screen.addch(j + 1, board.right_board, '|')
+    def draw_room(self, room, screen):
+        for i in range(room.left, room.right):
+            screen.addch(room.top + 1, i, '-')
+            screen.addch(room.bottom + 1, i, '-')
+        for j in range(room.top, room.bottom + 1):
+            screen.addch(j + 1, room.left, '|')
+            screen.addch(j + 1, room.right, '|')
 
     def print_action(self, screen):
         screen.addstr(0, 1, 'place holding')
 
     def print_status(self, screen):
-        screen.addstr(HEIGHT, 1, f'Level: 1  Gold: 35\t'
+        screen.addstr(HEIGHT, 1, f'Level: {self.controller.game.dungeon.level}\t'
+                                 f'Gold: 35\t'
                                  f'Hp: {self.controller.game.player.health}'
                                  f'({self.controller.game.player.max_health})')

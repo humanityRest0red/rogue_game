@@ -9,9 +9,10 @@ class Point:
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, current_room=0):
+        self.position = Point(5, 5)
+        self.current_room = current_room
         self.name = name
-        self.position = Point(15, 15)
         self.max_health = 25
         self.health = self.max_health
         self.agility = 10
@@ -32,12 +33,29 @@ class Zombie(Enemy):
         super().__init__(type_='Zombie', health=50, agility=10, strength=15, hostility=0)
 
 
-class Map:
-    def __init__(self):
-        self.left_board = 10
-        self.right_board = 20
-        self.up_board = 10
-        self.down_board = 20
+class Room:
+    def __init__(self, left=0, top=0, right=10, bottom=8):
+        self.left = left
+        self.top = top
+        self.right = right
+        self.bottom = bottom
+
+    @property
+    def width(self):
+        return self.right - self.left
+
+    @property
+    def height(self):
+        return self.bottom - self.top
+
+
+class Dungeon:
+    def __init__(self, level=1):
+        self.level = level
+        self.rooms = []
+
+    def add_room(self, room: Room):
+        self.rooms.append(room)
 
 
 # class GameState:

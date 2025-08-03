@@ -1,12 +1,12 @@
 from presentation.ui import GameUI
 from presentation.controllers import GameController
 from domain.game_logic import Game
-from domain.entities import Player, Map, Enemy
+from domain.entities import Player, Dungeon, Enemy
 
 
 def main():
     # enemies: Enemy = []
-    game = Game(Player("Ruslan"), Map())
+    game = Game(Player("Ruslan"), Dungeon())
     controller = GameController(game)
     ui = GameUI(controller)
 
