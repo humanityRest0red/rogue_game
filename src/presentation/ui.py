@@ -22,12 +22,12 @@ class GameUI:
 
                 for i in range(HEIGHT):
                     for j in range(WIDTH):
-                        map_grid = self.controller.game.dungeon.map_grid
-                        if map_grid[i][j] == CellType.FLOOR:
+                        map_cells = self.controller.game.dungeon.map_cells
+                        if map_cells[i][j] == CellType.FLOOR:
                             screen.addch(i + 1, j, '#')
-                        if map_grid[i][j] == CellType.ENTRY:
+                        if map_cells[i][j] == CellType.ENTRY:
                             screen.addch(i + 1, j, '/')
-                        if map_grid[i][j] == CellType.WALL:
+                        if map_cells[i][j] == CellType.WALL:
                             screen.addch(i + 1, j, '.')
                 self.print_status(screen)
 

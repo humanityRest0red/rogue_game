@@ -8,17 +8,16 @@ class Game:
         # self.state = None
 
     def move_player(self, direction):
-        i = self.player.current_room
-        map_grid = self.dungeon.map_grid
+        map_cells = self.dungeon.map_cells
         y = self.player.position.y
         x = self.player.position.x
-        if direction == 'up' and map_grid[y - 1][x].is_passable():
+        if direction == 'up' and map_cells[y - 1][x].is_passable():
             self.player.position.y -= 1
-        elif direction == 'down' and map_grid[y + 1][x].is_passable():
+        elif direction == 'down' and map_cells[y + 1][x].is_passable():
             self.player.position.y += 1
-        elif direction == 'left' and map_grid[y][x - 1].is_passable():
+        elif direction == 'left' and map_cells[y][x - 1].is_passable():
             self.player.position.x -= 1
-        elif direction == 'right' and map_grid[y][x + 1].is_passable():
+        elif direction == 'right' and map_cells[y][x + 1].is_passable():
             self.player.position.x += 1
 
     def attack(self):
