@@ -9,13 +9,16 @@ class Game:
 
     def move_player(self, direction):
         i = self.player.current_room
-        if direction == 'up' and self.player.position.y - 1 > self.dungeon.rooms[i].top:
+        map_grid = self.dungeon.map_grid
+        y = self.player.position.y
+        x = self.player.position.x
+        if direction == 'up' and map_grid[y - 1][x].is_passable():
             self.player.position.y -= 1
-        elif direction == 'down' and self.player.position.y + 1 < self.dungeon.rooms[i].bottom:
+        elif direction == 'down' and map_grid[y + 1][x].is_passable():
             self.player.position.y += 1
-        elif direction == 'left' and self.player.position.x - 1 > self.dungeon.rooms[i].left:
+        elif direction == 'left' and map_grid[y][x - 1].is_passable():
             self.player.position.x -= 1
-        elif direction == 'right' and self.player.position.x + 1 < self.dungeon.rooms[i].right:
+        elif direction == 'right' and map_grid[y][x + 1].is_passable():
             self.player.position.x += 1
 
     def attack(self):

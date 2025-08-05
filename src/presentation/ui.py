@@ -1,6 +1,6 @@
 import curses
 import time
-from domain.entities import WIDTH, HEIGHT
+from domain.entities import WIDTH, HEIGHT, CellType
 
 
 class GameUI:
@@ -19,9 +19,18 @@ class GameUI:
                 screen.clear()
 
                 self.print_action(screen)
-                for room in self.controller.game.dungeon.rooms:
-                    self.draw_room(room, screen)
+
+                for i in range(HEIGHT):
+                    for j in range(WIDTH):
+                        map_grid = self.controller.game.dungeon.map_grid
+                        if map_grid[i][j] == CellType.FLOOR:
+                            screen.addch(i + 1, j, '#')
+                        if map_grid[i][j] == CellType.ENTRY:
+                            screen.addch(i + 1, j, '/')
+                        if map_grid[i][j] == CellType.WALL:
+                            screen.addch(i + 1, j, '.')
                 self.print_status(screen)
+
                 screen.addch(self.controller.game.player.position.y + 1, self.controller.game.player.position.x, '@')
 
                 ch = screen.getch()
@@ -42,19 +51,11 @@ class GameUI:
                 screen.refresh()
                 time.sleep(0.5)
 
-    def draw_room(self, room, screen):
-        for i in range(room.left, room.right + 1):
-            screen.addch(room.top + 1, i, '-')
-            screen.addch(room.bottom + 1, i, '-')
-        for j in range(room.top, room.bottom + 1):
-            screen.addch(j + 1, room.left, '|')
-            screen.addch(j + 1, room.right, '|')
-
     def print_action(self, screen):
         screen.addstr(0, 1, 'place holding')
 
     def print_status(self, screen):
-        screen.addstr(HEIGHT, 1, f'Level: {self.controller.game.dungeon.level}\t'
+        screen.addstr(HEIGHT + 1, 1, f'Level: {self.controller.game.dungeon.level}\t'
                                  f'Gold: 35\t'
                                  f'Hp: {self.controller.game.player.health}'
                                  f'({self.controller.game.player.max_health})')
