@@ -43,7 +43,7 @@ class GameUI:
                 time.sleep(0.5)
 
     def draw_room(self, room, screen):
-        for i in range(room.left, room.right):
+        for i in range(room.left, room.right + 1):
             screen.addch(room.top + 1, i, '-')
             screen.addch(room.bottom + 1, i, '-')
         for j in range(room.top, room.bottom + 1):
