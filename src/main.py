@@ -1,15 +1,14 @@
-from presentation.ui import GameUI
-from presentation.controllers import GameController
-from domain.game_logic import Game
-from domain.entities import Player, Dungeon, Enemy, Point
+import sys
+
+from controller.controllers import GameController
 
 
 def main():
-    game = Game(Player("Ruslan", position=Point(6,4)), Dungeon())
-    controller = GameController(game)
-    ui = GameUI(controller)
-
-    ui.run()
+    mode = "Curses"
+    if len(sys.argv) > 1:
+        mode = "Pygame"
+    controller = GameController(mode)
+    controller.run()
 
 
 if __name__ == "__main__":
