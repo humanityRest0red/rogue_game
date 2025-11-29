@@ -1,5 +1,5 @@
 import pygame
-from math import pi, cos, sin
+import math
 
 from view.abstract_ui import AbstractGameUI
 from view.pygame_view_3d.settings import *
@@ -8,7 +8,6 @@ from view.pygame_view_3d.texture import Texture
 from view.pygame_view_3d.sound import Sound
 from domain.cell import Cell
 from domain.setting import HEIGHT_MAP, WIDTH_MAP
-from domain.enemies import Enemy
 
 UP = 0
 RIGHT = 1
@@ -17,10 +16,11 @@ LEFT = 3
 
 dir_arr = ['up', 'right', 'down', 'left']
 
+
 class GameUI3D(AbstractGameUI):
     def __init__(self, controller):
         self.controller = controller
-        self.player_angle: float = 3 * pi / 2
+        self.player_angle: float = 3 * math.pi / 2
         self.direction = UP
 
         pygame.init()
@@ -33,23 +33,24 @@ class GameUI3D(AbstractGameUI):
         self.font = pygame.font.Font(None, 36)  # None — шрифт по умолчанию, 36 — размер
         self.sound = Sound()
         self.texture = Texture(self.screen)
-    
-    def draw_map(self):
+
+    def draw_map(self) -> None:
         pass
 
-    def draw_player(self):
+    def draw_player(self) -> None:
         pass
-        
+
     def press_key(self):
         pass
-        
+
     def get_action(self):
         pass
-    
-    def draw_game_entity(self):
+
+    def draw_game_entity(self) -> None:
         pass
 
-    def update_screen(self):
+    @staticmethod
+    def update_screen():
         pygame.display.flip()
 
     def scoreboard_loop(self) -> None:
@@ -78,15 +79,15 @@ class GameUI3D(AbstractGameUI):
 
     def choose_from_inventory(self, items, title, show_current=None, mode="use"):
         super().choose_from_inventory(items, title, show_current=None, mode="use")
-    
+
     def print_state(self, action) -> None:
         super().print_state(action)
 
     def draw_win(self) -> None:
         super().draw_win()
-    
-    def draw_statictic(self) -> None:
-        super().draw_statictic()
+
+    def draw_statistics(self) -> None:
+        super().draw_statistics()
 
     def scoreboard_game_menu(self) -> None:
         super().scoreboard_game_menu()
@@ -94,15 +95,13 @@ class GameUI3D(AbstractGameUI):
     def draw_name_input(self) -> str:
         return super().draw_name_input()
 
-    def print_state(self, action):
-        super().print_state(action)
-    
-    def log_event(self, y, x, string, color=WHITE):
-        text_surface = self.font.render(string, True, (color))
+    def log_event(self, y, x, string, color=WHITE) -> None:
+        text_surface = self.font.render(string, True, color)
         self.screen.blit(text_surface, (x * 20, y * 30))
         self.update_screen()
-   
-    def get_key(self):
+
+    @staticmethod
+    def get_key() -> str:
         event = pygame.event.wait()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:
@@ -111,11 +110,7 @@ class GameUI3D(AbstractGameUI):
                 return "\n"
             else:
                 return event.unicode
-        return "" 
-
-    def draw_start_menu(self, menu_line):
-        message_lines = super().draw_start_menu(menu_line)
-        self.draw_screen_with_frame (message_lines)
+        return ""
 
     def draw_screen_with_frame(self, message_lines) -> None:
         self.clear()
@@ -126,10 +121,10 @@ class GameUI3D(AbstractGameUI):
         screen_height = HEIGHT_SCREEN
 
         text_surfaces = [self.font.render(line, True, WHITE) for line in message_lines]
-        max_width = max(surf.get_width() for surf in text_surfaces)
+        # max_width = max(surf.get_width() for surf in text_surfaces)
         total_height = sum(surf.get_height() for surf in text_surfaces) + (len(message_lines) - 1) * 10
 
-        start_x = (screen_width - max_width) // 2
+        # start_x = (screen_width - max_width) // 2
         start_y = (screen_height - total_height) // 2
 
         current_y = start_y
@@ -140,8 +135,7 @@ class GameUI3D(AbstractGameUI):
 
         pygame.display.flip()
 
-
-    def draw_world(self):
+    def draw_world(self) -> None:
         self.clear()
         self.draw_floor()
         self.ray_casting()
@@ -149,62 +143,53 @@ class GameUI3D(AbstractGameUI):
         # self.draw_floor()
         pygame.display.flip()
 
-    def clear(self):
+    def clear(self) -> None:
         self.screen.fill(CEILURE)
 
-    def draw_floor(self):
+    def draw_floor(self) -> None:
         pygame.draw.rect(self.screen,
-                    FLOOR,
-                    (0,
-                    HEIGHT_SCREEN // 2,
-                    WIDTH_SCREEN,
-                    HEIGHT_SCREEN // 2))
+                         FLOOR,
+                         (0,
+                          HEIGHT_SCREEN // 2,
+                          WIDTH_SCREEN,
+                          HEIGHT_SCREEN // 2))
 
-    def handle_input(self):
+    def handle_input(self) -> str:
         while True:
             event = pygame.event.wait()
-        # for event in pygame.event.get():
+            # for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 'exit'
-            elif event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_w, pygame.K_UP]:
-                    return dir_arr[self.direction]
+            if event.type == pygame.KEYDOWN:
+                match event.key:
+                    case pygame.K_w | pygame.K_UP:
+                        return dir_arr[self.direction]
+                    case pygame.K_s | pygame.K_DOWN:
+                        return dir_arr[(self.direction + 2) % 4]
+                    case pygame.K_a | pygame.K_LEFT:
+                        self.direction = (self.direction - 1) % 4
+                        self.player_angle -= math.pi / 2
+                        return ""
+                    case pygame.K_d | pygame.K_RIGHT:
+                        self.direction = (self.direction + 1) % 4
+                        self.player_angle += math.pi / 2
+                        return ""
+                    case pygame.K_RETURN:
+                        return 'apply'
+                    case pygame.K_q:
+                        return 'exit'
+                    case pygame.K_e:
+                        return 'scroll'
+                    case pygame.K_h:
+                        return 'weapon'
+                    case pygame.K_j:
+                        return 'food'
+                    case pygame.K_k:
+                        return 'potion'
 
-                elif event.key in [pygame.K_s, pygame.K_DOWN]:
-                    return dir_arr[(self.direction + 2) % 4]
-
-                elif event.key in [pygame.K_a, pygame.K_LEFT]:
-                    self.direction = (self.direction - 1) % 4
-                    self.player_angle -= pi / 2
-                    return ""
-                elif event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    self.direction = (self.direction + 1) % 4
-                    self.player_angle += pi / 2
-                    return ""
-                elif event.key == pygame.K_RETURN:
-                    return 'apply'
-                
-                elif event.key == pygame.K_q:
-                    return 'exit'
-                
-                elif event.key == pygame.K_e:
-                    return 'scroll'
-                
-                elif event.key == pygame.K_h:
-                    return 'weapon'
-                
-                elif event.key == pygame.K_j:
-                    return 'food'
-                
-                elif event.key == pygame.K_k:
-                    return 'potion'
-                # else:
-                    # return ""
-        # return None
-
-
-    def handle_inventory_input(self):
-         while True:
+    @staticmethod
+    def handle_inventory_input() -> str:
+        while True:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
                 return "exit"
@@ -217,14 +202,13 @@ class GameUI3D(AbstractGameUI):
                     return "toggle"
                 elif event.key == pygame.K_q:
                     return "exit"
-                elif event.key >= pygame.K_1 and event.key <= pygame.K_9:
+                elif pygame.K_1 <= event.key <= pygame.K_9:
                     number = event.key - pygame.K_0
                     return str(number)
                 else:
                     return ""
 
-
-    def ray_casting(self):
+    def ray_casting(self) -> None:
         cur_angle = self.player_angle - HALF_FOV
         xp = self.controller.game.player.x
         yp = self.controller.game.player.y
@@ -246,33 +230,33 @@ class GameUI3D(AbstractGameUI):
 
                 cell = self.controller.game.map_grid[y][x]
                 if cell.is_wall() or cell.is_door() or cell in [Cell.map_, Cell.exit_]:
-                    if cell.is_wall() or cell == Cell.map_:
-                        color = WALL
-                    elif cell == Cell.door:
-                        if xp == x and yp == y:
-                            color = WHITE
-                            continue
-                        else:
-                            color = BLACK
-                    elif cell == Cell.door_red:
-                        color = RED
-                    elif cell == Cell.door_green:
-                        color = GREEN
-                    elif cell == Cell.door_blue:
-                        color = BLUE
-                    elif cell == Cell.exit_:
-                        color = GREEN
+                    match cell:
+                        case _ if cell.is_wall() or cell == Cell.map_:
+                            color = WALL
+                        case Cell.door:
+                            if xp == x and yp == y:
+                                color = WHITE
+                                continue
+                            else:
+                                color = BLACK
+                        case Cell.door_red:
+                            color = RED
+                        case Cell.door_green:
+                            color = GREEN
+                        case Cell.door_blue:
+                            color = BLUE
+                        case Cell.exit_:
+                            color = GREEN
                     self.draw_cube(corrected_depth, proj_height, ray, color)
                     break
                 elif cell.value in ['Zombie', 'Vampire', 'Ghost', 'Ogre', 'Snake Wizard', 'Mimic',
-                'Potion', 'Weapon', 'Food', 'Scroll',
-                'Red Key', 'Green Key', 'Blue Key']:
+                                    'Potion', 'Weapon', 'Food', 'Scroll',
+                                    'Red Key', 'Green Key', 'Blue Key']:
                     self.entity_tracing(y, x, cell.value)
                     # break
             cur_angle += DELTA_ANGLE
-    
-    
-    def draw_cube(self, corrected_depth, proj_height, ray, color):
+
+    def draw_cube(self, corrected_depth, proj_height, ray, color) -> None:
         c_r = color[0] / (1 + corrected_depth * corrected_depth * 0.0001)
         c_g = color[1] / (1 + corrected_depth * corrected_depth * 0.0001)
         c_b = color[2] / (1 + corrected_depth * corrected_depth * 0.0001)
@@ -284,15 +268,14 @@ class GameUI3D(AbstractGameUI):
         )
 
         pygame.draw.rect(self.screen,
-                        col,
-                        (ray * SCALE,
-                        HEIGHT_SCREEN // 2 - proj_height // 2,
-                        SCALE,
-                        proj_height)
-                        )
-        
+                         col,
+                         (ray * SCALE,
+                          HEIGHT_SCREEN // 2 - proj_height // 2,
+                          SCALE,
+                          proj_height)
+                         )
 
-    def entity_tracing(self, y, x, entity):
+    def entity_tracing(self, y, x, entity) -> None:
         enemy_x = x
         enemy_y = y
 
@@ -304,7 +287,7 @@ class GameUI3D(AbstractGameUI):
 
         delta_angle = angle_to_enemy - self.player_angle
         delta_angle %= 2 * math.pi
-        
+
         if delta_angle > math.pi:
             delta_angle -= 2 * math.pi
         if abs(delta_angle) > HALF_FOV:
@@ -314,5 +297,4 @@ class GameUI3D(AbstractGameUI):
 
         proj_height = min(PROJ_COEFF / (distance + 0.0001), HEIGHT_SCREEN)
 
-        self.texture.draw(distance, proj_height, ray_index, entity)
-
+        self.texture.draw(proj_height, ray_index, entity)

@@ -18,7 +18,7 @@ NUM_RAYS: int = 1600
 MAX_DEPTH: int = 10000
 DELTA_ANGLE: float = 2 * HALF_FOV / NUM_RAYS
 DIST: float = (WIDTH_SCREEN / 2) / math.tan(HALF_FOV)
-PROJ_COEFF: float =  HEIGHT_SCREEN / (2 * math.tan(HALF_FOV))
+PROJ_COEFF: float = HEIGHT_SCREEN / (2 * math.tan(HALF_FOV))
 SCALE: float = WIDTH_SCREEN / NUM_RAYS
 RAY_WIDTH: float = WIDTH_SCREEN / NUM_RAYS
 

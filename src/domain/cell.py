@@ -2,6 +2,7 @@ from enum import Enum
 
 coordinate = tuple[int, int]
 
+
 class Cell(Enum):
     # fog
     fog = 'Fog'
@@ -19,7 +20,7 @@ class Cell(Enum):
     bottom_right_wall = 'Bottom Right Wall'
 
     exit_ = 'Exit'
-    
+
     # doors
     door = 'Door'
     door_red = 'Red Door'
@@ -31,7 +32,7 @@ class Cell(Enum):
     ring = 'Ring'
     crown = 'Crown'
     goblet = 'Goblet'
-    
+
     # item
     potion = 'Potion'
     food = 'Food'
@@ -54,17 +55,17 @@ class Cell(Enum):
 
     def is_passable(self):
         return self in (Cell.room, Cell.floor, Cell.door, Cell.fog, Cell.exit_) or self.is_item()
-    
-    def is_dropable(self): # fiix addd
+
+    def is_dropable(self):  # fix add
         return self in (Cell.room, Cell.floor, Cell.door)
 
-    def is_door(self): # fiix addd
+    def is_door(self):  # fix add
         return self in (Cell.door, Cell.door_red, Cell.door_green, Cell.door_blue)
 
     def is_item(self):
         return self in (Cell.potion, Cell.food, Cell.scroll, Cell.weapon,
-        Cell.doorkey_r, Cell.doorkey_g, Cell.doorkey_b)
+                        Cell.doorkey_r, Cell.doorkey_g, Cell.doorkey_b)
 
     def is_wall(self):
         return self in (Cell.horiz_wall, Cell.vert_wall, Cell.top_left_wall,
-            Cell.top_right_wall, Cell.bottom_left_wall, Cell.bottom_right_wall)
+                        Cell.top_right_wall, Cell.bottom_left_wall, Cell.bottom_right_wall)

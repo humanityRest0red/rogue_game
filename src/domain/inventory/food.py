@@ -10,6 +10,7 @@ class Food(Item):
         "bread": FOOD_MID,
         "meat": FOOD_HIGH
     }
+
     def __init__(self, y, x):
         name = choice(list(Food.type.keys()))
         super().__init__(y, x, "Food", name)

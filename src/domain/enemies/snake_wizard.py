@@ -1,13 +1,16 @@
-from random import random
+from __future__ import annotations
+import random
 
 from domain.enemies.enemy import Enemy
 from domain.setting import SNAKE_WIZARD_SLEEP_PERCENT_CHANCE
 
+
 class SnakeWizard(Enemy):
-    '''
-    Змей-маг (отображение: белая s): очень высокая ловкость. Ходит по карте по диагонали, постоянно меняя сторону.
-    У каждой успешной атаки есть вероятность «усыпить» игрока на один ход. Высокая враждебность.
-    '''
+    """
+    Змей-маг (отображение: белая s): очень высокая ловкость. Ходит по карте по диагонали,
+    постоянно меняя сторону. У каждой успешной атаки есть вероятность «усыпить» игрока
+    на один ход. Высокая враждебность.
+    """
 
     def __init__(self, y, x, current_room_id):
         super().__init__(
@@ -21,7 +24,7 @@ class SnakeWizard(Enemy):
         )
         self.y_direction = 'up'
 
-    def pattern_move(self, room):
+    def pattern_move(self, room: Room):
         super().pattern_move(room)
         if self.y_direction == 'down':
             if self.y + 1 <= room.y_:
@@ -31,11 +34,8 @@ class SnakeWizard(Enemy):
             if self.y - 1 >= room.y:
                 self.y -= 1
             self.y_direction = 'down'
-    
-    def attack(self, player):
-        if random() < SNAKE_WIZARD_SLEEP_PERCENT_CHANCE / 100:
+
+    def attack(self, player: Player):
+        if random.random() < SNAKE_WIZARD_SLEEP_PERCENT_CHANCE / 100:
             player.is_sleeping = True
         super().attack(player)
-        
-        
-

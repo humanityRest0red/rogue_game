@@ -54,7 +54,7 @@ class LoadManager:
     def load_room(data) -> Room:
         room = Room.from_saved(data['id'], data['x'], data['y'], data['x_'], data['y_'])
         room.is_discovered = data['is_discovered']
-        room.is_foged = data['is_foged']
+        room.is_fogged = data['is_fogged']
         room.doors_coordinates = set(tuple(coord) for coord in data['doors_coordinates'])
         # восстанавливаем двери как объекты
         room.doors = []
@@ -202,18 +202,21 @@ class LoadManager:
             enemy.is_resting = data['is_resting']
 
         return enemy
+
     @staticmethod
     def SCOREBOARD_LOAD():
-        filename = os.path.join("datalayer", "SCOREBOARD.json")
+        return scoreboard_load()
 
-        # Загружаем старые данные (если файл есть)
-        if os.path.exists(filename):
-            with open(filename, "r", encoding="utf-8") as f:
-                try:
-                    data = json.load(f)
-                except json.JSONDecodeError:
-                    data = []
-        else:
-            data = []
-        return data
 
+def scoreboard_load():
+    filename = os.path.join("datalayer", "SCOREBOARD.json")
+
+    if os.path.exists(filename):
+        with open(filename, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = []
+    else:
+        data = []
+    return data

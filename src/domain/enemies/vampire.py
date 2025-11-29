@@ -1,12 +1,13 @@
 from domain.enemies.enemy import Enemy
 from domain.setting import VAMPIRE_MAX_HEALTH_DAMAGING_PERCENT
 
+
 class Vampire(Enemy):
-    '''
+    """
     Вампир (отображение: красная v): высокая ловкость, враждебность и здоровье; средняя сила.
     Отнимает некоторое количество максимального уровня здоровья игроку при успешной атаке.
     Первый удар по вампиру — всегда промах.
-    '''
+    """
 
     def __init__(self, y, x, current_room_id):
         super().__init__(
@@ -29,4 +30,3 @@ class Vampire(Enemy):
         self.strength = strength_buffer
 
         return damage, i
-        

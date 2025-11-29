@@ -1,7 +1,6 @@
 from random import choice
 
 from domain.inventory.item import Item
-from domain.setting import POTION_HEALTH, POTION_STRENGTH, POTION_AGILITY
 
 
 class Potion(Item):
@@ -23,4 +22,4 @@ class Potion(Item):
         self.ability = name
         self.strength_label = choice(list(Potion.strength_type.keys()))
         self.amount, self.duration = Potion.strength_type[self.strength_label]
-
+        self.amount, self.duration = Potion.strength_type[self.strength_label]

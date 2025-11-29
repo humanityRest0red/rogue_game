@@ -2,6 +2,7 @@ from domain.map.room import Room
 from domain.map.corridor import Corridor
 from random import choice
 
+
 class Floor:
     def __init__(self, height: int, width: int):
         self.height = height
@@ -25,9 +26,9 @@ class Floor:
                         for d in self.rooms[corridor.room1].doors:
                             if d.x == door.x and d.y and door.y:
                                 d.color = colors[i]
-                        
+
                         for d in self.rooms[corridor.room2].doors:
-                             if d.x == door.x and d.y and door.y:
+                            if d.x == door.x and d.y and door.y:
                                 d.color = colors[i]
 
                         door.color = colors[i]
@@ -38,25 +39,23 @@ class Floor:
                     colored.append(corridor)
                     break
 
-
-
     def open_corridor(self, y, x):
         d1_obj = None
         d2_obj = None
-        
+
         # Находим двери в коридоре по координатам
         for corridor in self.corridors:
             if (corridor.doors[0].y == y and corridor.doors[0].x == x) or \
-                (corridor.doors[1].y == y and corridor.doors[1].x == x):
+                    (corridor.doors[1].y == y and corridor.doors[1].x == x):
                 d1_obj = corridor.doors[0]
                 d2_obj = corridor.doors[1]
-        
+
         # Открываем двери (меняем цвет)
         if d1_obj:
             d1_obj.color = 'White'
         if d2_obj:
             d2_obj.color = 'White'
-        
+
         # Теперь ищем эти двери в комнатах и тоже меняем их цвет
         for room in self.rooms:
             for door in room.doors:
@@ -64,7 +63,7 @@ class Floor:
                     door.color = 'White'
                 if d2_obj and door.y == d2_obj.y and door.x == d2_obj.x:
                     door.color = 'White'
-                    
+
     def generate_level_room(self) -> list[Room]:
         rooms = []
         w_size = self.width // 3
@@ -72,43 +71,17 @@ class Floor:
         w_step = w_size - 1
         h_step = h_size - 1
 
-        id = 0
+        room_id = 0
         for col in range(3):
             for row in range(3):
                 x = self.x + w_step * row
                 y = self.y + h_step * col
-                room = Room(x, y, h_size, w_size, id)
+                room = Room(x, y, h_size, w_size, room_id)
                 rooms.append(room)
-                id += 1
+                room_id += 1
         return rooms
 
-
-    # def generate_corridors(self) -> list[Corridor]:
-    #     self.corridors = []
-    #     self.door_map = {}
-
-
-    #     for room in self.rooms:
-    #         for side in room.random_door_side():
-    #             try:
-                    # target_id, target_side, door_a = room.generate_doors(side)
-                    # if 0 <= target_id < len(self.rooms):
-                    #     target_room = self.rooms[target_id]
-                    #     _, _, door_b = target_room.generate_doors(target_side.strip())
-
-                    #     # Определим направление
-                    #     direction = "h" if side in ["left", "right"] else "v"
-                    #     # corridor = Corridor(door_a, door_b, direction)
-                    #     corridor = Corridor(door_a, door_b, room.id, direction)
-
-                    #     corridors.append(corridor)
-
-                # except Exception as e:
-                #     print(f"Error generate corridors: {e}")
-
-        # return corridors
-
-    def generate_corridors(self) -> list[Corridor]:
+    def generate_corridors(self) -> None:
         self.corridors = []
         self.door_map = {}
 
@@ -137,7 +110,6 @@ class Floor:
                         self.door_map[room.id][target_id]['pair_color'] = door_b.color
                         self.door_map[target_room.id][room.id]['pair_color'] = door_a.color
 
-
                         # Определим направление
                         direction = "h" if side in ["left", "right"] else "v"
                         a_position = door_a.y, door_a.x
@@ -147,11 +119,8 @@ class Floor:
                 except Exception as e:
                     print(f"Error generate corridors: {e}")
 
-    
-    def get_room_by_id(self, room_id: int) -> Room:
+    def get_room_by_id(self, room_id: int) -> Room | None:
         for room in self.rooms:
             if room.id == room_id:
                 return room
         return None
-
-

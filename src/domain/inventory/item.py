@@ -1,6 +1,6 @@
-
 class Item:
-    type = ["Potion", "Scroll", "Food", "Weapon"]#, "Door Key"]
+    type = ["Potion", "Scroll", "Food", "Weapon"]  #, "Door Key"]
+
     def __init__(self, y: int, x: int, type: str, subtype: str):
         self.y = y
         self.x = x

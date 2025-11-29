@@ -9,33 +9,33 @@ class AbstractGameUI(ABC):
     def __init__(self, controller):
         self.controller = controller
         self.screen = None
-        
+
     @abstractmethod
-    def draw_game_entity(self, y, x, string, color):
+    def draw_game_entity(self, y, x, string, color) -> None:
         pass
 
     @abstractmethod
-    def draw_world(self):
+    def draw_world(self) -> None:
         pass
 
     @abstractmethod
-    def draw_map(self):
+    def draw_map(self) -> None:
         pass
 
     @abstractmethod
-    def draw_player(self):
+    def draw_player(self) -> None:
         pass
-        
+
     @abstractmethod
     def draw_screen_with_frame(self, message_lines):
         pass
-        
+
     @abstractmethod
     def update_screen(self) -> None:
         pass
 
-    @abstractmethod
-    def get_key(self):
+    @staticmethod
+    def get_key() -> str:
         pass
 
     @abstractmethod
@@ -43,15 +43,18 @@ class AbstractGameUI(ABC):
         pass
 
     @abstractmethod
-    def get_action(self, ch):
-        pass 
-    
+    def get_action(self, ch) -> str:
+        pass
+
+    @abstractmethod
+    def clear(self) -> None:
+        pass
+
     @abstractmethod
     def draw_start_menu(self, menu_line) -> None:
-        # self.clear()
-        LSWITCH, RSWITCH, EMPTY = "<<<", ">>>", "   "
-        switcher = {key: (EMPTY, EMPTY) for i, key in enumerate(range(0, 4))}
-        switcher[menu_line] = (LSWITCH, RSWITCH)
+        l_switch, r_switch, empty = "<<<", ">>>", "   "
+        switcher = {key: (empty, empty) for i, key in enumerate(range(0, 4))}
+        switcher[menu_line] = (l_switch, r_switch)
 
         message_lines = [
             "",
@@ -70,7 +73,7 @@ class AbstractGameUI(ABC):
             "",
         ]
         self.draw_screen_with_frame(message_lines)
-        
+
     @abstractmethod
     def choose_from_inventory(self, items, title, show_current=None, mode="use", item_type=None):
         if show_current is not None:
@@ -91,9 +94,9 @@ class AbstractGameUI(ABC):
                 self.log_event(start_line + i, 0, f'{i}. {item.subtype}')
 
         self.log_event(start_line + len(items) + 2, 0,
-                        f"Mode: {mode.upper()}  |  Press D to toggle mode  |  Press Q to cancel")
+                       f"Mode: {mode.upper()}  |  Press D to toggle mode  |  Press Q to cancel")
         self.update_screen()
-            
+
     @abstractmethod
     def print_state(self, action) -> None:
         if action == 'start':
@@ -107,18 +110,18 @@ class AbstractGameUI(ABC):
         else:
             strength_weapon = 0
         msg = (f'Level:{self.controller.game.level}    '
-                                 f'Hits:{self.controller.game.player.health}'
-                                 f'({self.controller.game.player.max_health})   '
-                                 f'Str:{self.controller.game.player.strength}'
-                                 f'({strength_weapon})   '
-                                 f'Gold:{self.controller.game.player.gold}    '
-                                 f'Exp:{self.controller.game.player.experience_level}'
-                                 f'/{self.controller.game.player.experience}   '
-                                 f'    Keys: ')
+               f'Hits:{self.controller.game.player.health}'
+               f'({self.controller.game.player.max_health})   '
+               f'Str:{self.controller.game.player.strength}'
+               f'({strength_weapon})   '
+               f'Gold:{self.controller.game.player.gold}    '
+               f'Exp:{self.controller.game.player.experience_level}'
+               f'/{self.controller.game.player.experience}   '
+               f'    Keys: ')
         self.log_event(HEIGHT_MAP, 1, msg)
         for i, key in enumerate(self.controller.game.player.inventory.doorkeys, start=len(msg) + 1):
             self.log_event(HEIGHT_MAP, i, get_map_case(key.type)[0], get_map_case(key.type)[1])
-    
+
     @abstractmethod
     def draw_win(self):
         self.clear()
@@ -129,7 +132,6 @@ class AbstractGameUI(ABC):
 
         self.log_event(start_y + 5, 0, '[Press any key to rankings]')
         self.handle_input()
-
 
     @abstractmethod
     def show_no_saves(self):
@@ -230,7 +232,6 @@ class AbstractGameUI(ABC):
 
         return name
 
-
     @abstractmethod
     def show_empty_scoreboard(self):
         message_lines = [
@@ -244,8 +245,7 @@ class AbstractGameUI(ABC):
             ""
         ]
         self.draw_screen_with_frame(message_lines)
-        
-    
+
     @abstractmethod
     def scoreboard_loop(self) -> None:
         saves = LoadManager.SCOREBOARD_LOAD()
@@ -262,7 +262,7 @@ class AbstractGameUI(ABC):
             action = self.handle_input()
             if action == 'exit':
                 return
-    
+
     @abstractmethod
     def show_scoreboard(self) -> None:
         saves = LoadManager.SCOREBOARD_LOAD()
@@ -284,7 +284,7 @@ class AbstractGameUI(ABC):
         for record in saves:
             status = "Winner" if record["is_win"] else "GameOver"
             line = (
-                f"{record['player']:<10} | {record['level_player']:^3} | {record['level_dugeon']:^4} | {record['gold']:^5} | "
+                f"{record['player']:<10} | {record['level_player']:^3} | {record['level_dungeon']:^4} | {record['gold']:^5} | "
                 f"{record['enemies_killed']:^7} | {record['food_used']:^4} | {record['potions_used']:^7} | {record['scrolls_used']:^7} | "
                 f"{record['damage_dealt']:^5} | {record['damage_taken']:^5} | {record['cells_passed']:^6} | {status:^8}"
             )
@@ -300,15 +300,15 @@ class AbstractGameUI(ABC):
         self.draw_screen_with_frame(message_lines)
 
     @abstractmethod
-    def draw_statictic(self ,conttroler):
-        state = conttroler.controller.game.state
-        game = conttroler.controller.game
-        dif = conttroler.controller.game.difficulty_adjuster
+    def draw_statistics(self, controller):
+        state = controller.controller.game.state
+        game = controller.controller.game
+        dif = controller.controller.game.difficulty_adjuster
         self.log_event(HEIGHT_MAP + 3, 1, f'enemy_spawn_chance: {dif.enemy_spawn_chance}')
         self.log_event(HEIGHT_MAP + 4, 1, f'enemy_difficulty: {dif.enemy_difficulty}')
         self.log_event(HEIGHT_MAP + 5, 1, f'item_spawn_chance: {dif.item_spawn_chance}')
         self.log_event(HEIGHT_MAP + 6, 1, f'count_items: {len(game.items)}')
-        self.log_event(HEIGHT_MAP + 7, 1, f'count_eneymis: {len(game.enemies)}')
+        self.log_event(HEIGHT_MAP + 7, 1, f'count_enemies: {len(game.enemies)}')
 
         self.log_event(HEIGHT_MAP + 8, 1, f'potions: {state.potions_used}')
         self.log_event(HEIGHT_MAP + 9, 1, f'scrolls: {state.scrolls_used}')
@@ -319,3 +319,11 @@ class AbstractGameUI(ABC):
         self.log_event(HEIGHT_MAP + 14, 1, f'enemies_killed: {state.enemies_killed}')
         self.log_event(HEIGHT_MAP + 15, 1, f'cells_passed: {state.cells_passed}')
         self.log_event(HEIGHT_MAP + 11, 1, f'keys on floor: {len(game.keys)}')
+
+    @abstractmethod
+    def log_event(self, y, x, message):
+        pass
+
+    @abstractmethod
+    def handle_input(self) -> str:
+        pass

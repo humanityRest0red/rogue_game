@@ -10,6 +10,7 @@ class Scroll(Item):
         "strength": SCROLL_STRENGTH,
         "agility": SCROLL_AGILITY
     }
+
     def __init__(self, y, x):
         name = choice(list(Scroll.type.keys()))
         super().__init__(y, x, "Scroll", name)

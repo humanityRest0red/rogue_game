@@ -3,6 +3,8 @@ from domain.enemies import Enemy, Ogre
 
 
 menu_states = ('start_game', 'load_game', 'show_score', 'exit')
+
+
 class State:
     game_state = ('play', 'exit', 'win', 'game_over')
 
@@ -46,7 +48,8 @@ class State:
         self.enemy = ''
         self.item = ''
 
-    def enemy_attack_wrapper(self_method, method, state):
+    @staticmethod
+    def enemy_attack_wrapper(method, state):
         def wrapped(self, player):
             is_ogre_resting = self.name == 'Ogre' and self.is_resting
 
@@ -59,9 +62,9 @@ class State:
                 state.enemy = f'{self.name} scored an excellent hit on you for {damage} damage'
             
             if is_ogre_resting:
-                state.enemy = f'Ogre is resting for one move'
+                state.enemy = 'Ogre is resting for one move'
             if self.name == 'Snake Wizard' and player.is_sleeping:
-                state.enemy += f'. Enemy sends you to the Kingdom of Dreams'
+                state.enemy += '. Enemy sends you to the Kingdom of Dreams'
             if player.health <= 0:
                 state.killed_by = self.name
             
@@ -71,8 +74,9 @@ class State:
 
             return damage, i
         return wrapped
-    
-    def player_attack_wrapper(self_method, method, state):
+
+    @staticmethod
+    def player_attack_wrapper(method, state):
         def wrapped(self, enemy):
             missing_on_vampire_msg = ''
             if enemy.name == 'Vampire' and enemy.shield:
@@ -94,9 +98,10 @@ class State:
             return damage, i
         return wrapped
 
-    def player_pick_up_wrapper(self_method, method, state):
-        def wrapped(self, item):
-            item = method(self, item)
+    @staticmethod
+    def player_pick_up_wrapper(method, state):
+        def wrapped(*args, **kwargs):
+            item = method(*args, **kwargs)
             match item.type:
                 case "Gold":
                     state.item = f'You find {item.amount} gold pieces'
@@ -120,22 +125,25 @@ class State:
             return item
         return wrapped
 
-    def player_get_treasures_wrapper(self_method, method, state):
-        def wrapped(self, player):
-            name = method(self, player)
+    @staticmethod
+    def player_get_treasures_wrapper(method, state):
+        def wrapped(*args, **kwargs):
+            name = method(*args, **kwargs)
             state.item = f'You have got the {name}'
             return name
         return wrapped
-    
-    def player_level_up_wrapper(self_method, method, state):
+
+    @staticmethod
+    def player_level_up_wrapper(method, state):
         def wrapped(self):
             method(self)
             state.item = f'Welcome to level {self.experience_level}'
         return wrapped
-    
-    def player_use_item_wrapper(self_method, method, state):
-        def wrapped(self, item):
-            method(self, item)
+
+    @staticmethod
+    def player_use_item_wrapper(method, state):
+        def wrapped(*args, **kwargs):
+            method(*args, **kwargs)
             if "food" in method.__name__:
                 state.food_used += 1
             elif "potion" in method.__name__:
@@ -143,11 +151,11 @@ class State:
             elif "scroll" in method.__name__:
                 state.scrolls_used += 1
         return wrapped
-    
-    
-    def player_move_wrapper(self_method, method, state):
-        def wrapped(self, direction, map_grid, enemies, items, keys, floor):
-            has_moved = method(self, direction, map_grid, enemies, items, keys, floor)
+
+    @staticmethod
+    def player_move_wrapper(method, state):
+        def wrapped(*args, **kwargs):
+            has_moved = method(*args, **kwargs)
             if has_moved:
                 state.cells_passed += 1
             return has_moved

@@ -1,7 +1,9 @@
 from domain.inventory import Item, Food, Weapon, Potion, Scroll, DoorKey
 
+
 class Inventory:
     max_item_inventory = 9
+
     def __init__(self):
         self.food: list[Food] = []
         self.potions: list[Potion] = []

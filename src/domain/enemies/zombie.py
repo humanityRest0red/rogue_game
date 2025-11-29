@@ -1,9 +1,10 @@
 from domain.enemies.enemy import Enemy
 
+
 class Zombie(Enemy):
-    '''
+    """
     Зомби (отображение: зеленый z): низкая ловкость; средняя сила, враждебность; высокое здоровье.
-    '''
+    """
 
     def __init__(self, y, x, current_room_id):
         super().__init__(

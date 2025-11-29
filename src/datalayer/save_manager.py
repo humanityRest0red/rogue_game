@@ -4,14 +4,14 @@ import os
 from domain.game_logic import Game
 from domain.map.floor import Floor, Room, Corridor
 from domain.map.exit import Exit
-from domain.inventory import Item, Food, Weapon, Potion, Scroll
+from domain.inventory import Item, Weapon
 from domain.cell import Cell
 from domain.inventory.inventory import Inventory
 from domain.difficulty_adjuster import DifficultyAdjuster
 from domain.state import State
 from domain.enemies import Enemy
 from domain.player import Player
-
+from .load_manager import scoreboard_load
 
 SAVES_FOLDER = 'datalayer/saves/'
 
@@ -22,7 +22,8 @@ SAVES_FOLDER = 'datalayer/saves/'
 #         item_path = os.path.join(folder_path, item)
 #         if os.path.isfile(item_path):
 #             count += 1
-#     return count       
+#     return count
+
 
 class SaveManager:
     @staticmethod
@@ -66,6 +67,7 @@ class SaveManager:
             'corridors': [SaveManager.save_corridor(c) for c in floor.corridors],
         }
 
+    @staticmethod
     def save_room(room: Room):
         return {
             'id': room.id,
@@ -74,7 +76,7 @@ class SaveManager:
             'x_': room.x_,
             'y_': room.y_,
             'is_discovered': room.is_discovered,
-            'is_foged': room.is_foged,
+            'is_fogged': room.is_fogged,
             'doors_coordinates': list(room.doors_coordinates),
             'doors': [
                 {
@@ -109,13 +111,12 @@ class SaveManager:
             'is_discovered': corridor.is_discovered
         }
 
-    
     @staticmethod
-    def save_exit(exit: Exit):
+    def save_exit(exit_: Exit):
         return {
-            'id': exit.id,
-            'x': exit.x,
-            'y': exit.y,
+            'id': exit_.id,
+            'x': exit_.x,
+            'y': exit_.y,
         }
 
     @staticmethod
@@ -144,7 +145,8 @@ class SaveManager:
             'cells_passed': state.cells_passed,
             'player_hp_percent': state.player_hp_percent
         }
-        
+
+    @staticmethod
     def save_item(item: Item):
         base = {
             'y': item.y,
@@ -171,7 +173,7 @@ class SaveManager:
                 raise ValueError(f"Unknown item type: {item.type}")
 
         return base
-    
+
     @staticmethod
     def save_enemy(enemy: Enemy):
         base = {
@@ -237,22 +239,10 @@ class SaveManager:
             'weapon': SaveManager.save_weapon(player.weapon),
             'is_sleeping': player.is_sleeping
         }
-        
 
-        
     @staticmethod
     def SCOREBOARD(player_name, game: Game):
-        filename = os.path.join("datalayer", "SCOREBOARD.json")
-
-        # Загружаем старые данные (если файл есть)
-        if os.path.exists(filename):
-            with open(filename, "r", encoding="utf-8") as f:
-                try:
-                    data = json.load(f)
-                except json.JSONDecodeError:
-                    data = []
-        else:
-            data = []
+        data = scoreboard_load()
 
         record = {
             "player": player_name,
@@ -265,10 +255,11 @@ class SaveManager:
             "damage_dealt": game.state.damage_dealt,
             "cells_passed": game.state.cells_passed,
             "level_player": game.player.experience_level,
-            "level_dugeon": game.level,
+            "level_dungeon": game.level,
             "is_win": game.state.game_state == "win"
         }
         data.append(record)
 
+        filename = os.path.join("datalayer", "SCOREBOARD.json")
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

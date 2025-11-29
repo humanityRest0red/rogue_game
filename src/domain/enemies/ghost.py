@@ -3,16 +3,17 @@ from random import randint, random
 from domain.enemies.enemy import Enemy
 from domain.setting import GHOST_UNSEE_PERCENT_CHANCE
 
+
 class Ghost(Enemy):
-    '''
+    """
     Привидение (отображение: белый g): высокая ловкость; низкая сила, враждебность и здоровье.
     Постоянно телепортируется по комнате и периодически становится невидимым, пока игрок не вступил в бой.
-    '''
+    """
 
     def __init__(self, y, x, current_room_id):
         super().__init__(
             y=y, x=x, name='Ghost',
-            current_room_id = current_room_id,
+            current_room_id=current_room_id,
             agility=Enemy.agility['HIGH'],
             strength=Enemy.strength['LOW'],
             hostility=Enemy.hostility['LOW'],

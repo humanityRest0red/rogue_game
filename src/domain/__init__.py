@@ -1,1 +1,0 @@
-# coordinate = tuple[int, int]

@@ -74,7 +74,7 @@ class GameController:
                     break
             except curses.error:
                 self.view.print_curses_error()
-                
+
     def load_loop(self):
         save_dir = "datalayer/saves"
         saves = [f for f in os.listdir(save_dir) if f.endswith(".json")]
@@ -136,8 +136,6 @@ class GameController:
             except curses.error:
                 self.view.print_curses_error()
 
-
-
     def use_or_drop(self, item_type, item, mode, inv):
         if mode == "use":
             if item_type == "food":
@@ -151,7 +149,7 @@ class GameController:
         else:  # drop
             self.game.player.drop_item(item, self.game.items, self.game.map_grid)
             inv.remove(item)
-    
+
     def move_player(self, direction):
         self.game.player.move(direction, self.game.map_grid, self.game.enemies, self.game.items, self.game.keys, self.game.floor)
 
@@ -200,11 +198,9 @@ class GameController:
             SaveManager.save(self.game.player.name, self.game)
             return self.game.state
 
-
-        elif action in ['left', 'right', 'up', 'down']:
+        if action in ['left', 'right', 'up', 'down']:
             self.move_player(action)
             check = True
-
         elif action == 'weapon':
             self.use_item('weapon')
         elif action == 'food':
@@ -243,7 +239,7 @@ class GameController:
                 # self.view.clear()
                 self.view.draw_world()
                 self.view.print_state(action)
-                # self.view.draw_statictic()
+                # self.view.draw_statistic()
                 action = self.view.handle_input()
                 state = self.update_game_state(action)
                 if state.game_state == 'exit':
@@ -267,7 +263,3 @@ class GameController:
                 self.view.draw_win()
             elif state.game_state == 'game_over':
                 self.view.draw_game_over(state)
-
-    # def main_loop(self, stdscr):
-    #     self.view.init_curses(stdscr)
-    #     self.menu_loop()

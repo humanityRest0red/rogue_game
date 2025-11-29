@@ -4,9 +4,9 @@ from typing import Any
 from domain.cell import coordinate, Cell
 from domain.map.door import Door
 
+
 class Corridor:
     def __init__(self, start: coordinate, finish: coordinate, room_id, direction: str = "h"):
-    # def __init__(self, start: coordinate, finish: coordinate, direction: str = "h"):
         self.start, self.finish = self.shift_initials(start, finish, direction)
         self.corridor: dict[coordinate, Any] = {}
         self.doors = []
@@ -25,7 +25,8 @@ class Corridor:
         self.is_discovered = False
 
     @staticmethod
-    def shift_initials(start: coordinate, finish: coordinate, direction: str) -> tuple[coordinate, coordinate]:
+    def shift_initials(start: coordinate, finish: coordinate, direction: str) \
+            -> tuple[coordinate, coordinate]:
         y, x = start
         y_, x_ = finish
         if direction == "v":
@@ -73,4 +74,3 @@ class Corridor:
 
     def tiles(self) -> dict[coordinate, Any]:
         return self.corridor.copy()
-

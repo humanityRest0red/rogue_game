@@ -1,10 +1,10 @@
 from random import randint, sample
-from typing import Any
 
 from domain.setting import (HEIGHT_MIN_ROOM, WIDTH_MIN_ROOM, ROOM_INDENT)
 from domain.cell import coordinate
 from domain.cell import Cell
 from domain.map.door import Door
+
 
 class Room:
     # door_side = {
@@ -35,7 +35,7 @@ class Room:
         self.id = id
         self.x, self.y, self.x_, self.y_ = self.generate_room(start_x, start_y, height, width)
         self.is_discovered = False
-        self.is_foged = True
+        self.is_fogged = True
         self.sides = self.door_side[self.id].copy()
         self.doors_coordinates = set()
         self.doors = []
@@ -64,7 +64,7 @@ class Room:
     def remove_side(self, side: str):
         if side in self.sides:
             self.sides.remove(side)
-    # was
+
     def generate_doors(self, side: str) -> tuple[int, str, coordinate]:
         self.remove_side(side)
         match side:
@@ -89,12 +89,11 @@ class Room:
 
         return *next_, door
 
-
     def get_wall_symbol(self, x, y):
         char = Cell.map_
-        if (x == self.x - 1 or x == self.x_ + 1) and self.y <= y <= self.y_:
+        if x in (self.x - 1, self.x_ + 1) and self.y <= y <= self.y_:
             char = Cell.vert_wall
-        elif (y == self.y - 1 or y == self.y_ + 1) and self.x <= x <= self.x_:
+        elif y in (self.y - 1, self.y_ + 1) and self.x <= x <= self.x_:
             char = Cell.horiz_wall
         elif y == self.y - 1 and x == self.x - 1:
             char = Cell.top_left_wall
@@ -115,11 +114,11 @@ class Room:
     
     @classmethod
     def from_saved(cls, id: int, x: int, y: int, x_: int, y_: int):
-        room = cls.__new__(cls)  # создаём объект без вызова __init__
+        room = cls.__new__(cls)
         room.id = id
         room.x, room.y, room.x_, room.y_ = x, y, x_, y_
         room.is_discovered = False
-        room.is_foged = True
+        room.is_fogged = True
         room.sides = cls.door_side.get(id, []).copy()
         room.doors_coordinates = set()
         room.doors = []
